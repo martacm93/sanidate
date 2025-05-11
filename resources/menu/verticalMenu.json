@@ -1,0 +1,44 @@
+{
+  "menu": [
+    {
+      "url": "/",
+      "name": "Home",
+      "icon": "menu-icon tf-icons fa fa-home",
+      "slug": "pages-home"
+    },
+    
+    {
+      "url": "/users",
+      "name": "Users",
+      "icon": "menu-icon tf-icons fa fa-user-circle",
+      "slug": "pages-users"
+    },
+    {
+      "url": "/doctors",
+      "name": "Doctors",
+      "icon": "menu-icon tf-icons fa fa-user-md",
+      "slug": "pages-doctors"
+    },
+    {
+      "url": "/specialties",
+      "name": "Specialties",
+      "icon": "menu-icon tf-icons fa fa-plus-square",
+      "slug": "pages-specialties"
+    },
+    {
+      "url": "/patients",
+      "name": "Patients",
+      "icon": "menu-icon tf-icons fa fa-user",
+      "slug": "pages-patients"
+    },
+    {
+      "url": "/appointments/search",
+      "name": "Appointments",
+      "icon": "menu-icon tf-icons fa fa-calendar",
+      "slug": "pages-appointments-search"
+    }
+    
+    
+
+  ]
+}

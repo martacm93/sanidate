@@ -7331,7 +7331,7 @@
   function r(e, t) {
     var i = Object.assign({}, {
       fields: {},
-      locale: "es_ES",
+      locale: "en_US",
       plugins: {},
       init: function init(e) {}
     }, t);

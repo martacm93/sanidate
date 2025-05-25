@@ -16,21 +16,28 @@ class SpecialtiesTableseeder extends Seeder
     public function run()
     {
         $specialties = [
-            'General Odontology',
-            'Ortodoncy',
-            'Endodoncy',
-            'Periodoncy',
-            'Stetic Odontology',
-            'Odontopediatry',
-            'Implantology',
-            'Prostodoncy',
+            'General Medicine',
+            'Cardiology',
+            'Dermatology',
+            'Endocrinology',
+            'Gastroenterology',
+            'Neurology',
+            'Pediatrics',
+            'Psychiatry',
+            'Orthopedics',
+            'Pulmonology',
+            'Oncology',
+            'Ophthalmology',
+            'Rheumatology',
+            'Urology',
+            'Infectious Diseases',
         ];
 
         foreach ($specialties as $specialty) {
-            Specialty::create([
-                'name' => $specialty,
-                'active' => '1'
-            ]);
+            Specialty::firstOrCreate(
+                ['name' => $specialty],
+                ['active' => true]
+            );
         }
     }
 }

@@ -25,13 +25,8 @@ class Patients extends Controller
       $patients = [patient::find($auth_user->patient->id)];
     }elseif($auth_user->hasRole('doctor')){
       $appoint_doctor = Appointment::where('doctor_id', $auth_user->doctor->id)->get();
-      $patients = [];
-      foreach($appoint_doctor as $appointment){
-        $patients[] = patient::find($appointment->patient_id);
-      }
+      $patients = Patient::whereIn('id', $appoint_doctor->pluck('patient_id')->unique())->get();
     }
-
-
     return view('content.pages.patients.home', ['patients' => $patients, 'users' => $users]);
   }
 

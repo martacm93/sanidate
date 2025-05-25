@@ -20,10 +20,10 @@ $customizerHidden = 'customizer-hide';
       <div class="flex-row text-center mx-auto">
 
         <!-- introduce la imagen foto-portada.jpg como imagen de decoracion -->
-        
-        
-        <img src="/assets/img/foto-portada5.jpg" alt="foto-portada" class="img-fluid " >
-        
+
+
+        <img src="/assets/img/foto-portada5.jpg" alt="foto-portada" class="auth-img">
+
       </div>
     </div>
     <!-- /Left Text -->
@@ -33,7 +33,7 @@ $customizerHidden = 'customizer-hide';
       <div class="w-px-400 mx-auto">
         <div class="app-brand justify-content-center mb-4">
           <a href="{{url('/')}}" class="app-brand-link gap-2 mb-2">
-            <span class=""><img class="" src="\assets\img\logo\logo-modified2.png"></span>
+            <span class=""><img src="/assets/img/logo/logo-modified2.png" class="img-fluid w-75 logo-center" alt="logo"></span>
           </a>
         </div>
         <!-- Logo -->
@@ -43,7 +43,7 @@ $customizerHidden = 'customizer-hide';
           </a>
         </div>
         <!-- /Logo -->
-        
+
         <p class="mb-4">Please sign-in to your account</p>
 
         @if (session('status'))
@@ -117,10 +117,10 @@ $customizerHidden = 'customizer-hide';
             <i class="tf-icons bx bxl-twitter"></i>
           </a>
         -->
-        </div>
       </div>
     </div>
-    <!-- /Login -->
   </div>
+  <!-- /Login -->
+</div>
 </div>
 @endsection

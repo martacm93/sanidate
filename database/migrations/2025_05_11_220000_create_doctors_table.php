@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->unique()->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->unsignedBigInteger('specialty_id')->unique()->nullable();
+            $table->unsignedBigInteger('specialty_id')->nullable();
             $table->foreign('specialty_id')->references('id')->on('specialties')->onDelete('set null');
 
             $table->integer('annual_salary');

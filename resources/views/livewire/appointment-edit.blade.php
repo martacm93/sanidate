@@ -13,7 +13,7 @@
         @endif
 
         <input type="hidden" name="appointment_id" value="{{ $appointment->id }}">
-        <input type="hidden" name="doctor_id" value="{{ }}">
+        <input type="hidden" name="doctor_id" value="{{ $appointment->doctor_id }}">
         <input type="hidden" name="patient_id" value="{{ $appointment->patient_id }}">
 
         <div class="mb-3">

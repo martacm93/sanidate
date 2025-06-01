@@ -26,6 +26,10 @@ RUN sed -ri -e 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/
 # Establece el directorio de trabajo
 WORKDIR /var/www/html
 
+# Cambia permisos de los directorios necesarios para Laravel
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache && \
+    chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
 # Instala dependencias PHP y JS + compila assets + setup
 RUN composer install --no-dev --optimize-autoloader && \
     npm install && \

@@ -13,7 +13,15 @@ RUN a2enmod rewrite
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copia el código del proyecto
-COPY . /var/www/html
+COPY . /var/www
+
+# Apunta Apache al directorio `public`
+ENV APACHE_DOCUMENT_ROOT=/var/www/public
+
+# Ajusta configuración de Apache para que use ese docroot
+RUN sed -ri -e 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/*.conf && \
+    sed -ri -e 's!/var/www/html!/var/www/public!g' /etc/apache2/apache2.conf
+
 
 # Establece el directorio de trabajo
 WORKDIR /var/www/html

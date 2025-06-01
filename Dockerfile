@@ -30,7 +30,6 @@ WORKDIR /var/www/html
 RUN composer install --no-dev --optimize-autoloader && \
     npm install && \
     npm run build && \
-    php artisan setup:dev || true && \
     php artisan optimize && \
     chmod -R 777 storage && \
     chmod -R 777 bootstrap/cache && \

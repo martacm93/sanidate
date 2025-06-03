@@ -13,25 +13,37 @@ use Illuminate\Support\Facades\Hash;
 class Doctors extends Controller
 {
 
-  public function index()
+  public function index(Request $request)
   {
-    $doctors = Doctor::all();
+    $auth_user = User::find(auth()->user()->id);
+    $search = $request->input('search');
+    $specialty_id = $request->input('specialty');
+
     $specialties = Specialty::all();
-    $auth_user = user::find(auth()->user()->id);
-    if($auth_user->hasRole('admin')){
-      $users = User::all();
-    }else{
-      $users = $auth_user;
-      if($auth_user->doctor != null)
-      $doctors = [doctor::find($auth_user->doctor->id)];
-      else{
-        $doctors = [];
+
+    if ($auth_user->hasRole('admin')) {
+      $query = Doctor::with(['user', 'specialty']);
+
+      if ($search) {
+        $query->whereHas('user', function ($q) use ($search) {
+          $q->where('name', 'like', '%' . $search . '%');
+        });
       }
+
+      if ($specialty_id) {
+        $query->where('specialty_id', $specialty_id);
+      }
+
+      $doctors = $query->paginate(10)->appends($request->only('search', 'specialty'));
+    } elseif ($auth_user->doctor) {
+      $doctors = collect([$auth_user->doctor->load(['user', 'specialty'])]);
+    } else {
+      $doctors = collect(); // vacío
     }
 
-    return view('content.pages.doctors.home', ['doctors' => $doctors, 'users' => $users, 'specialties' => $specialties]);
+    return view('content.pages.doctors.home', compact('doctors', 'specialties'));
   }
-
+  
   public function create()
   {
     $specialties = Specialty::where('active', 1)->get();
@@ -52,7 +64,7 @@ class Doctors extends Controller
     $doctor->specialty_id = $request->specialty_id;
     $doctor->user_id = $user->id;
     $doctor->annual_salary = $request->annual_salary;
-    $doctor->active = $request-> active;
+    $doctor->active = $request->active;
     $doctor->save();
 
     return redirect()->route('pages-doctors');
@@ -82,7 +94,7 @@ class Doctors extends Controller
     $user->email = $request->email;
     $user->password = Hash::make($request->new_password);
     $doctor->specialty_id = $request->specialty_id;
-    $doctor->active = $request-> active;
+    $doctor->active = $request->active;
     $doctor->annual_salary = $request->annual_salary;
     $user->save();
     $doctor->save();
@@ -105,5 +117,4 @@ class Doctors extends Controller
     $doctor->delete();
     return redirect()->route('pages-doctors');
   }
-  
 }

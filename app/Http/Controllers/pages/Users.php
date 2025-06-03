@@ -11,19 +11,34 @@ use App\Http\Requests\UpdateUser;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
+
 class Users extends Controller
 {
-  public function index()
-  {
-    $auth_user = user::find(auth()->user()->id);
-    if($auth_user->hasRole('admin')){
-      $users = User::all();
-    }else{
-      $users = [$auth_user];
+
+  public function index(Request $request)
+{
+    $auth_user = User::find(auth()->user()->id);
+    $search = $request->input('search');
+    $role = $request->input('role');
+
+    if ($auth_user->hasRole('admin')) {
+        $users = User::when($search, function ($query, $search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('email', 'like', '%' . $search . '%');
+            })
+            ->when($role, function ($query, $role) {
+                $query->whereHas('roles', function ($q) use ($role) {
+                    $q->where('name', $role);
+                });
+            })
+            ->paginate(10)
+            ->appends(['search' => $search, 'role' => $role]);
+    } else {
+        $users = collect([$auth_user]);
     }
-   
+
     return view('content.pages.users.home', ['users' => $users]);
-  }
+}
 
   public function create()
   {

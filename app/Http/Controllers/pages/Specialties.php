@@ -14,11 +14,24 @@ use App\Models\User;
 
 class Specialties extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
-    $specialties = Specialty::all();
+    $search = $request->input('search');
+    $status = $request->input('status');
 
-    return view('content.pages.specialties.home', ['specialties' => $specialties]);
+    $query = Specialty::query();
+
+    if ($search) {
+      $query->where('name', 'like', '%' . $search . '%');
+    }
+
+    if ($status !== null && in_array($status, ['0', '1'])) {
+      $query->where('active', $status);
+    }
+
+    $specialties = $query->paginate(10)->appends($request->only('search', 'status'));
+
+    return view('content.pages.specialties.home', compact('specialties'));
   }
 
   public function create()
@@ -30,7 +43,7 @@ class Specialties extends Controller
   {
     $specialty = new Specialty();
     $specialty->name = $request->name;
-    $specialty->active = $request-> active;
+    $specialty->active = $request->active;
     $specialty->save();
 
     return redirect()->route('pages-specialties');
@@ -55,7 +68,7 @@ class Specialties extends Controller
   {
     $specialty = Specialty::find($request->specialty_id);
     $specialty->name = $request->name;
-    $specialty->active = $request-> active;
+    $specialty->active = $request->active;
     $specialty->save();
     return redirect()->route('pages-specialties');
   }
@@ -66,7 +79,7 @@ class Specialties extends Controller
     return view('content.pages.specialties.delete', ['specialty' => $specialty]);
   }
 
-  public function destroy(Request $request )
+  public function destroy(Request $request)
   {
     $specialty = Specialty::find($request->specialty_id);
     $specialty->delete();

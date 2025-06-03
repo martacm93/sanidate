@@ -16,19 +16,35 @@ use Spatie\Permission\PermissionRegistrar;
 
 class Patients extends Controller
 {
-  public function index()
+  public function index(Request $request)
   {
-    $patients = Patient::all();
-    $users = User::all();
-    $auth_user = user::find(auth()->user()->id);
-    if($auth_user->hasRole('patient')){
-      $patients = [patient::find($auth_user->patient->id)];
-    }elseif($auth_user->hasRole('doctor')){
+    $auth_user = User::find(auth()->user()->id);
+    $search = $request->input('search');
+
+    $patients = Patient::with('user');
+
+    if ($auth_user->hasRole('patient')) {
+      $patients = Patient::with('user')->where('id', $auth_user->patient->id);
+    } elseif ($auth_user->hasRole('doctor')) {
       $appoint_doctor = Appointment::where('doctor_id', $auth_user->doctor->id)->get();
-      $patients = Patient::whereIn('id', $appoint_doctor->pluck('patient_id')->unique())->get();
+      $patients = Patient::with('user')->whereIn('id', $appoint_doctor->pluck('patient_id')->unique());
     }
-    return view('content.pages.patients.home', ['patients' => $patients, 'users' => $users]);
+
+    // Si es admin o no entra en ningún filtro previo, se usa el query base
+    $patients = is_a($patients, 'Illuminate\Database\Eloquent\Builder') ? $patients : Patient::with('user')->whereIn('id', $patients->pluck('id'));
+
+    // Búsqueda por nombre del usuario
+    if ($search) {
+      $patients = $patients->whereHas('user', function ($query) use ($search) {
+        $query->where('name', 'like', '%' . $search . '%');
+      });
+    }
+
+    $patients = $patients->paginate(10)->appends(['search' => $search]);
+
+    return view('content.pages.patients.home', ['patients' => $patients]);
   }
+
 
   public function create()
   {
@@ -55,7 +71,7 @@ class Patients extends Controller
     $patient->active = $request->active;
     $patient->medical_warnings = $request->medical_warnings;
     $patient->save();
-    
+
 
     return redirect()->route('pages-patients');
   }

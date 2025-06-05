@@ -16,29 +16,31 @@ class Users extends Controller
 {
 
   public function index(Request $request)
-{
+  {
     $auth_user = User::find(auth()->user()->id);
     $search = $request->input('search');
     $role = $request->input('role');
 
     if ($auth_user->hasRole('admin')) {
-        $users = User::when($search, function ($query, $search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                      ->orWhere('email', 'like', '%' . $search . '%');
-            })
-            ->when($role, function ($query, $role) {
-                $query->whereHas('roles', function ($q) use ($role) {
-                    $q->where('name', $role);
-                });
-            })
-            ->paginate(10)
-            ->appends(['search' => $search, 'role' => $role]);
+      $users = User::when($search, function ($query, $search) {
+        return $query->where(function ($q) use ($search) {
+          $q->where('name', 'like', "%{$search}%")
+            ->orWhere('email', 'like', "%{$search}%");
+        });
+      })
+        ->when($role, function ($query, $role) {
+          return $query->whereHas('roles', function ($q) use ($role) {
+            $q->where('name', $role);
+          });
+        })
+        ->paginate(10)
+        ->appends(['search' => $search, 'role' => $role]);
     } else {
-        $users = collect([$auth_user]);
+      $users = collect([$auth_user]);
     }
 
     return view('content.pages.users.home', ['users' => $users]);
-}
+  }
 
   public function create()
   {

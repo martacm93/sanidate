@@ -36,7 +36,7 @@ class Users extends Controller
         ->paginate(10)
         ->appends(['search' => $search, 'role' => $role]);
     } else {
-      $users = collect([$auth_user]);
+      $users = User::where('id', $auth_user->id)->paginate(10);
     }
 
     return view('content.pages.users.home', ['users' => $users]);
